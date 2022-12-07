@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="get-path-flow" doc:id="575b4ff0-e501-4328-991e-9832f554982a" >
+		<logger level="INFO" doc:name="entry-log" doc:id="4f752b09-2e43-4794-b783-d3ad495b0f71" message="Get Flow Started"/>
+		<ee:transform doc:name="Transform Message" doc:id="0a93efdb-877d-4f9c-8381-b2882096b8fd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	uniqueId: attributes.headers.vendorName ++ " - " ++ uuid(),
+	currentDate: (now() >> "IST") as String {format: "dd-MM-uuuu hh:mm a"},
+	status: "Success"	
+}	
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="end-log" doc:id="843adcb1-9b3c-45a4-8340-2a7ed2a3e59b" message="Get flow completed successfully" />
+	</flow>
+	<flow name="post-path-flow" doc:id="1b7df65a-1231-4c38-9257-c6c7124de655" >
+		<logger level="INFO" doc:name="entry-log" doc:id="91675da0-401f-40a5-b342-f4af1c6327cd" message="Post Flow Started"/>
+		<choice doc:name="Choice" doc:id="cf0dbd41-989a-4c8a-97f2-bddb1f19dd53">
+			<when expression="#[payload.orders.noOfRecords as Number  == sizeOf(payload.orders.*records)]">
+				<ee:transform doc:name="Transform Message" doc:id="a48c4da1-687c-4169-856a-bb627a7340df">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.orders.*records map {
+    "order-id": payload.orders.orderId,
+    "user-name": upper($.name),
+    "phone-number": "+91 " ++ $.contactNo,
+    "mail": $.emailId
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="end-log" doc:id="1a98da89-401a-4b87-9e7d-bd0692a23933" message="post flow successfully completed" />
+			</when>
+			<otherwise>
+				<ee:transform doc:name="error-response" doc:id="740361e2-ed10-45bb-a3bc-97bff26f2b61">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"errorMessage": "Number of records counts doesn’t match with the records in an array",
+	"status": "Failed"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
