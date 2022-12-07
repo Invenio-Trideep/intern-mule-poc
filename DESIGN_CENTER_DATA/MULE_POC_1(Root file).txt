@@ -1,0 +1,52 @@
+#%RAML 1.0
+title: MULE_POC_1
+description: Mule Proof of Concept 1
+baseUri: http://localhost:8081/poc-1
+
+
+/get-path:
+  description: This is get method request POC1
+  get:
+    headers:
+      vendorName:
+        displayName: vendorName
+        type: string
+        required: true
+        example: InveioLSI
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/getResponse.json
+      500:
+        body:
+          application/json:
+            example:
+              {
+                "status": 500,
+                "message":"Internal Server Error"
+              }
+/post-path:
+  post:
+    body:
+      application/xml:
+        example: !include examples/postRequest.json
+    responses:
+      200:
+        body:
+          application/xml:
+            example:
+              <?xml version="1.0" encoding="UTF-8"?>
+                <response>
+                  <status>200</status>
+                  <message>Success</message>
+                </response>
+      500:
+        body:
+          application/xml:
+            example:
+              <?xml version="1.0" encoding="UTF-8"?>
+                <response>
+                  <status>500</status>
+                  <message>Internal Server Error</message>
+                </response>      

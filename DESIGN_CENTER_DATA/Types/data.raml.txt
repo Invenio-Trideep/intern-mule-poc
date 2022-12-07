@@ -1,0 +1,21 @@
+#%RAML 1.0 DataType
+
+type: object
+properties:
+  name:
+    displayName: name
+    required: true
+    example: "Trideep Pati"
+    type: string
+  contactNo:
+    displayName: Contact No
+    required: true
+    example: 9337623260
+    type: integer
+  emailId:
+    displayName: Email Id
+    required: true
+    example: pati.trideep143@gmail.com
+    type: any
+      
+

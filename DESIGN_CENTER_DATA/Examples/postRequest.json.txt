@@ -1,0 +1,18 @@
+{
+  "orderId": "AB123",
+  "processingDate": "061222",
+  "processingTime": "1237",
+  "noOfRecords": "2",
+  "records": [
+    {
+      "name": "xyz",
+      "contactNo": "9876543210",
+      "emailId": "test@inveniolsi.com"
+    },
+    {
+      "name": "abc",
+      "contactNo": "9876543211",
+      "emailId": "test123@inveniolsi.com"
+    }
+  ]
+}
